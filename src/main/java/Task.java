@@ -3,11 +3,11 @@ import java.time.LocalDateTime;
 public class Task {
     private int idTask;
     private String description;
-    private String status;
-    private LocalDateTime createdAt;
+    private Status status;
+    private final LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public Task(int idTask, String description, String status) {
+    public Task(int idTask, String description, Status status) {
         this.idTask = idTask;
         this.description = description;
         this.status = status;
@@ -32,11 +32,11 @@ public class Task {
         setUpdatedAt();
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
         setUpdatedAt();
     }
