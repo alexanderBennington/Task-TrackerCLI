@@ -1,4 +1,7 @@
+package modelo;
+
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Task {
     private int idTask;
@@ -51,5 +54,28 @@ public class Task {
 
     public void setUpdatedAt() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "modelo.Task{" +
+                "idTask=" + idTask +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return idTask == task.idTask && Objects.equals(description, task.description) && status == task.status && Objects.equals(createdAt, task.createdAt) && Objects.equals(updatedAt, task.updatedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idTask, description, status, createdAt, updatedAt);
     }
 }
