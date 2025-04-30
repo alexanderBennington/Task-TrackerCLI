@@ -1,14 +1,20 @@
-package modelo;
+package model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Task {
+public class Task implements Serializable {
     private int idTask;
     private String description;
     private Status status;
     private final LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public Task(){
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 
     public Task(int idTask, String description, Status status) {
         this.idTask = idTask;
