@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import model.Status;
 import model.Task;
 
 import java.io.File;
@@ -104,6 +105,43 @@ public class TaskDAO implements ITaskDAO{
         }
     }
 
+    @Override
+    public boolean updateStatusById(int idTask, Status status){
+        List<Task> tasks = getAllTasks();
+        boolean updated = false;
+
+        for (Task task : tasks) {
+            if (task.getIdTask() == idTask) {
+                task.setStatus(status);
+                task.setUpdatedAt();
+                updated = true;
+                break;
+            }
+        }
+
+        if (updated) {
+            writeTasksToFile(tasks);
+        }
+
+        return updated;
+    }
+
+    @Override
+    public List<Task> getTodoTasks() {
+        return getTasksByStatus(Status.TODO);
+    }
+
+    @Override
+    public List<Task> getProgressTasks() {
+        return getTasksByStatus(Status.IN_PROGRESS);
+    }
+
+    @Override
+    public List<Task> getDoneTasks() {
+        return getTasksByStatus(Status.DONE);
+    }
+
+
     private void writeTasksToFile(List<Task> tasks) {
         try {
             objectMapper.writeValue(new File(FILE_NAME), tasks);
@@ -111,4 +149,11 @@ public class TaskDAO implements ITaskDAO{
             LOGGER.log(Level.WARNING, "Filed to write the JSON file", e);
         }
     }
+
+    public List<Task> getTasksByStatus(Status status) {
+        return getAllTasks().stream()
+                .filter(task -> task.getStatus() == status)
+                .toList();
+    }
+
 }
