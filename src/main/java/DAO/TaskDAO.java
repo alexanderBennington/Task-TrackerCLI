@@ -8,8 +8,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TaskDAO implements ITaskDAO{
+    private static final Logger LOGGER = Logger.getLogger(TaskDAO.class.getName());
     private static final String FILE_NAME = "tasks.json";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -22,11 +25,17 @@ public class TaskDAO implements ITaskDAO{
     }
 
     @Override
-    public void saveTask(Task task) {
-        List<Task> tasks = getAllTasks();
-        task.setIdTask(generateNextId(tasks));
-        tasks.add(task);
-        writeTasksToFile(tasks);
+    public boolean saveTask(Task task) {
+        try {
+            List<Task> tasks = getAllTasks();
+            task.setIdTask(generateNextId(tasks));
+            tasks.add(task);
+            writeTasksToFile(tasks);
+            return true;
+        } catch (Exception e) {
+            System.out.println("❌ Failed to save task: " + e.getMessage());
+            return false;
+        }
     }
 
     @Override
@@ -38,7 +47,7 @@ public class TaskDAO implements ITaskDAO{
             }
             return objectMapper.readValue(file, new TypeReference<List<Task>>() {});
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Failed to read the JSON file", e);
             return new ArrayList<>();
         }
     }
@@ -52,31 +61,47 @@ public class TaskDAO implements ITaskDAO{
     }
 
     @Override
-    public void updateTask(Task task) {
+    public boolean updateTask(Task task) {
         List<Task> tasks = getAllTasks();
+        boolean updated = false;
+
         for (Task t : tasks) {
             if (t.getIdTask() == task.getIdTask()) {
                 t.setDescription(task.getDescription());
                 t.setStatus(task.getStatus());
                 t.setUpdatedAt();
+                updated = true;
                 break;
             }
         }
-        writeTasksToFile(tasks);
+
+        if (updated) {
+            writeTasksToFile(tasks);
+        }
+
+        return updated;
     }
 
     @Override
-    public void deleteTaskById(int idTask) {
+    public boolean deleteTaskById(int idTask) {
         List<Task> tasks = getAllTasks();
+        int originalSize = tasks.size();
+
         tasks.removeIf(t -> t.getIdTask() == idTask);
-        writeTasksToFile(tasks);
+
+        if (tasks.size() < originalSize) {
+            writeTasksToFile(tasks);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void writeTasksToFile(List<Task> tasks) {
         try {
             objectMapper.writeValue(new File(FILE_NAME), tasks);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Filed to write the JSON file", e);
         }
     }
 }
