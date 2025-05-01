@@ -10,20 +10,22 @@ import java.util.Scanner;
 public class TaskTrackerApp {
     private static final String FILE_NAME = "tasks.json";
 
-    public static void ensureFileExists() {
+    private static void ensureFileExists() {
         Path path = Paths.get(FILE_NAME);
         try {
             if (!Files.exists(path)) {
                 Files.createFile(path);
                 Files.writeString(path, "[]");
                 System.out.println("📂 File created: " + FILE_NAME);
+            } else {
+                System.out.println("📂 File exists: " + FILE_NAME);
             }
         } catch (Exception e) {
             System.out.println("❌ Failed to create the JSON file: " + e.getMessage());
         }
     }
 
-    public static void showWelcome(Scanner console) {
+    private static void showWelcome(Scanner console) {
         boolean exit = false;
         String RESET = "\u001B[0m";
         String BLUE = "\u001B[34m";
@@ -67,7 +69,7 @@ public class TaskTrackerApp {
         } while(!exit);
     }
 
-    public static boolean selectedOption(Scanner console, int option){
+    private static boolean selectedOption(Scanner console, int option){
         ITaskDAO taskDAO = new TaskDAO();
         List<Task> tasks = taskDAO.getAllTasks();
         switch (option){
@@ -87,7 +89,14 @@ public class TaskTrackerApp {
                     System.out.println("❌ Task not saved.");
                 }
             }
-            case 3 -> {}
+            case 3 -> {
+                Task task = updateTaskOption(console);
+                if (taskDAO.updateTask(task)) {
+                    System.out.println("✅ Task updated successfully!");
+                } else {
+                    System.out.println("❌ Task not updated.");
+                }
+            }
             case 4 -> {}
             case 5 -> {}
             case 6 -> {
@@ -111,11 +120,12 @@ public class TaskTrackerApp {
         while (!validStatus){
             try {
                 System.out.println("""
-                            Status (Select 1, 2 or 3)
+                            Status
                             1. TODO
                             2. IN_PROGRESS
                             3. DONE
                             """);
+                System.out.print("Select: ");
                 progress = Integer.parseInt(console.nextLine());
                 switch (progress){
                     case 1 -> {
@@ -137,6 +147,48 @@ public class TaskTrackerApp {
             }
         }
         return new Task(description, status);
+    }
+
+    private static Task updateTaskOption(Scanner console){
+        Status status = null;
+        int progress;
+        boolean validStatus = false;
+
+        System.out.println("ID of the task to be modified: ");
+        int idtask = Integer.parseInt(console.nextLine());
+        System.out.println("New Description: ");
+        String description = console.nextLine();
+
+        while (!validStatus) {
+            try {
+                System.out.println("""
+                        New Status
+                        1. TODO
+                        2. IN_PROGRESS
+                        3. DONE
+                        """);
+                System.out.print("Select: ");
+                progress = Integer.parseInt(console.nextLine());
+                switch (progress) {
+                    case 1 -> {
+                        status = Status.TODO;
+                        validStatus = true;
+                    }
+                    case 2 -> {
+                        status = Status.IN_PROGRESS;
+                        validStatus = true;
+                    }
+                    case 3 -> {
+                        status = Status.DONE;
+                        validStatus = true;
+                    }
+                    default -> System.out.println("⚠️ Please enter a number between 1 and 3.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("❌ Invalid input. Please enter a number between 1 and 3.");
+            }
+        }
+        return new Task(idtask, description, status);
     }
 
     public static void main(String[] args) {
