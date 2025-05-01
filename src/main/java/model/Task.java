@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task implements Serializable {
-    @JsonProperty("id") // Ajusta el nombre del campo en JSON si es necesario
+    @JsonProperty("idTask")
     private int idTask;
 
     @JsonProperty("description")
@@ -30,8 +30,7 @@ public class Task implements Serializable {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public Task(int idTask, String description, Status status) {
-        this.idTask = idTask;
+    public Task(String description, Status status) {
         this.description = description;
         this.status = status;
         this.createdAt = LocalDateTime.now();
