@@ -1,14 +1,28 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task implements Serializable {
+    @JsonProperty("id") // Ajusta el nombre del campo en JSON si es necesario
     private int idTask;
+
+    @JsonProperty("description")
     private String description;
+
+    @JsonProperty("status")
     private Status status;
+
+    @JsonProperty("createdAt")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private final LocalDateTime createdAt;
+
+    @JsonProperty("updatedAt")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime updatedAt;
 
     public Task(){
