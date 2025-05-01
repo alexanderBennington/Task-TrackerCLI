@@ -1,10 +1,6 @@
-import DAO.ITaskDAO;
-import DAO.TaskDAO;
-import model.Status;
-import model.Task;
+import controller.TaskController;
 
 import java.nio.file.*;
-import java.util.List;
 import java.util.Scanner;
 
 public class TaskTrackerApp {
@@ -26,6 +22,7 @@ public class TaskTrackerApp {
     }
 
     private static void showWelcome(Scanner console) {
+        TaskController taskC = new TaskController();
         boolean exit = false;
         String RESET = "\u001B[0m";
         String BLUE = "\u001B[34m";
@@ -56,140 +53,21 @@ public class TaskTrackerApp {
                 ║  3. Edit task                 ║
                 ║  4. Delete task               ║
                 ║  5. Search for a task by ID   ║
-                ║  6. Exit                      ║
+                ║  6. Update status             ║
+                ║  7. Exit                      ║
                 ╚═══════════════════════════════╝
                 """ + RESET);
             try {
                 System.out.print("Select an option: ");
                 int option = Integer.parseInt(console.nextLine());
-                exit = selectedOption(console, option);
+                exit = taskC.selectedOption(console, option);
             } catch (NumberFormatException e) {
-                System.out.println("❌ Invalid input. Please enter a number between 1 and 6.");
+                System.out.println("❌ Invalid input. Please enter a number between 1 and 7.");
             }
         } while(!exit);
     }
 
-    private static boolean selectedOption(Scanner console, int option){
-        ITaskDAO taskDAO = new TaskDAO();
-        List<Task> tasks = taskDAO.getAllTasks();
-        switch (option){
-            case 1 -> {
-                if (tasks.isEmpty()) {
-                    System.out.println("📭 No tasks found.");
-                } else {
-                    tasks.forEach(System.out::println);
-                }
-                System.out.println();
-            }
-            case 2 -> {
-                Task task = saveTaskOption(console);
-                if (taskDAO.saveTask(task)) {
-                    System.out.println("✅ Task saved successfully!");
-                } else {
-                    System.out.println("❌ Task not saved.");
-                }
-            }
-            case 3 -> {
-                Task task = updateTaskOption(console);
-                if (taskDAO.updateTask(task)) {
-                    System.out.println("✅ Task updated successfully!");
-                } else {
-                    System.out.println("❌ Task not updated.");
-                }
-            }
-            case 4 -> {}
-            case 5 -> {}
-            case 6 -> {
-                System.out.println("👋 Goodbye!");
-                return true;
-            }
-            default -> System.out.println("⚠️ Please enter a number between 1 and 6.");
-        }
-        return false;
-    }
 
-    private static Task saveTaskOption(Scanner console){
-        String description;
-        Status status = null;
-        int progress;
-        boolean validStatus = false;
-
-        System.out.print("📝 Enter task description: ");
-        description = console.nextLine();
-
-        while (!validStatus){
-            try {
-                System.out.println("""
-                            Status
-                            1. TODO
-                            2. IN_PROGRESS
-                            3. DONE
-                            """);
-                System.out.print("Select: ");
-                progress = Integer.parseInt(console.nextLine());
-                switch (progress){
-                    case 1 -> {
-                        status = Status.TODO;
-                        validStatus = true;
-                    }
-                    case 2 -> {
-                        status = Status.IN_PROGRESS;
-                        validStatus = true;
-                    }
-                    case 3 -> {
-                        status = Status.DONE;
-                        validStatus = true;
-                    }
-                    default -> System.out.println("⚠️ Please enter a number between 1 and 3.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("❌ Invalid input. Please enter a number between 1 and 3.");
-            }
-        }
-        return new Task(description, status);
-    }
-
-    private static Task updateTaskOption(Scanner console){
-        Status status = null;
-        int progress;
-        boolean validStatus = false;
-
-        System.out.println("ID of the task to be modified: ");
-        int idtask = Integer.parseInt(console.nextLine());
-        System.out.println("New Description: ");
-        String description = console.nextLine();
-
-        while (!validStatus) {
-            try {
-                System.out.println("""
-                        New Status
-                        1. TODO
-                        2. IN_PROGRESS
-                        3. DONE
-                        """);
-                System.out.print("Select: ");
-                progress = Integer.parseInt(console.nextLine());
-                switch (progress) {
-                    case 1 -> {
-                        status = Status.TODO;
-                        validStatus = true;
-                    }
-                    case 2 -> {
-                        status = Status.IN_PROGRESS;
-                        validStatus = true;
-                    }
-                    case 3 -> {
-                        status = Status.DONE;
-                        validStatus = true;
-                    }
-                    default -> System.out.println("⚠️ Please enter a number between 1 and 3.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("❌ Invalid input. Please enter a number between 1 and 3.");
-            }
-        }
-        return new Task(idtask, description, status);
-    }
 
     public static void main(String[] args) {
         ensureFileExists();
