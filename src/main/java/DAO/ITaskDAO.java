@@ -6,21 +6,21 @@ import model.Task;
 import java.util.List;
 
 public interface ITaskDAO {
-    public boolean saveTask(Task task);
+    boolean saveTask(Task task);
 
-    public List<Task> getAllTasks();
+    List<Task> getAllTasks();
 
-    public Task getTaskById(int idTask);
+    Task getTaskById(int idTask);
 
-    public boolean updateTask(Task task);
+    boolean updateTask(Task task);
 
-    public boolean deleteTaskById(int idTask);
+    boolean deleteTaskById(int idTask);
 
-    public boolean updateStatusById(int idTask, Status status);
+    boolean updateStatusById(int idTask, Status status);
 
-    public List<Task> getTodoTasks();
+    List<Task> getTodoTasks();
 
-    public List<Task> getProgressTasks();
+    List<Task> getProgressTasks();
 
-    public List<Task> getDoneTasks();
+    List<Task> getDoneTasks();
 }
