@@ -14,9 +14,7 @@ public class TaskController {
         ITaskDAO taskDAO = new TaskDAO();
         List<Task> tasks = taskDAO.getAllTasks();
         switch (option){
-            case 1 -> {
-                viewTasks(tasks);
-            }
+            case 1 -> viewTasks(tasks);
             case 2 -> {
                 Task task = saveTaskOption(console);
                 if (taskDAO.saveTask(task)) {
