@@ -2,6 +2,8 @@ package DAO;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import model.Task;
 
 import java.io.File;
@@ -14,8 +16,13 @@ import java.util.logging.Logger;
 public class TaskDAO implements ITaskDAO{
     private static final Logger LOGGER = Logger.getLogger(TaskDAO.class.getName());
     private static final String FILE_NAME = "tasks.json";
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
+    public TaskDAO() {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    }
 
     private int generateNextId(List<Task> tasks) {
         return tasks.stream()

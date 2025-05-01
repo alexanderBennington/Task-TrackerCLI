@@ -18,11 +18,11 @@ public class Task implements Serializable {
     private Status status;
 
     @JsonProperty("createdAt")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime createdAt;
 
     @JsonProperty("updatedAt")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
     public Task(){
@@ -77,7 +77,7 @@ public class Task implements Serializable {
 
     @Override
     public String toString() {
-        return "modelo.Task{" +
+        return "Task{" +
                 "idTask=" + idTask +
                 ", description='" + description + '\'' +
                 ", status=" + status +
